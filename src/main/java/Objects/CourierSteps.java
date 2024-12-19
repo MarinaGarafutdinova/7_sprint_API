@@ -9,13 +9,17 @@ public class CourierSteps {
     private static final String CREATE_COURIER = "api/v1/courier";
     private static final String LOGIN_COURIER = "/api/v1/courier/login";
 
+
     @Step("Создание курьера")
     public Response getPostRequestCreateCourier(Courier courier) {
-        return given().log().all().filter(new AllureRestAssured()).header("Content-type", "application/json").body(courier).when().post(CREATE_COURIER);
+        return given().log().all().filter(new AllureRestAssured())
+                .header("Content-type", "application/json")
+                .body(courier).when().post(CREATE_COURIER);
     }
 
     @Step("Авторизация курьера")
     public Response getPostRequestCourierLogin(Courier courier) {
-        return given().log().all().header("Content-type", "application/json").body(courier).when().post(LOGIN_COURIER);
+        return given().log().all().header("Content-type", "application/json")
+                .body(courier).when().post(LOGIN_COURIER);
     }
 }

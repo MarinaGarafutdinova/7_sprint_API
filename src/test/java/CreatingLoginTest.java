@@ -18,8 +18,8 @@ public class CreatingLoginTest {
     @DisplayName("Курьер авторизирован")
     @Description("Авторизации курьера с корректным логином и паролем")
     public void checkCreatingLoginTest() {
-        CourierSteps courierClient = new CourierSteps();
-        Response postRequestCourierLogin = courierClient.getPostRequestCourierLogin(new Courier("Pechkin123", "Pas1233", "IIPechkin"));
+        CourierSteps courierStep = new CourierSteps();
+        Response postRequestCourierLogin = courierStep.getPostRequestCourierLogin(new Courier("Pechkin123", "Pas1233", "IIPechkin"));
         postRequestCourierLogin.then().log().all().assertThat().statusCode(200).and().body("id", Matchers.notNullValue());
     }
 
@@ -27,8 +27,8 @@ public class CreatingLoginTest {
     @DisplayName("Курьер авторизирован без логина")
     @Description("Авторизации курьера без логина")
     public void checkWithoutLoginAuthorization() {
-        CourierSteps courierClient = new CourierSteps();
-        Response postRequestCourierLogin = courierClient.getPostRequestCourierLogin(new Courier("", "Pas1233"));
+        CourierSteps courierStep = new CourierSteps();
+        Response postRequestCourierLogin = courierStep.getPostRequestCourierLogin(new Courier(null, "Pas1233"));
         postRequestCourierLogin.then().log().all().assertThat().statusCode(400).and().body("message", Matchers.is("Недостаточно данных для входа"));
     }
 
@@ -36,8 +36,8 @@ public class CreatingLoginTest {
     @DisplayName("Курьер авторизирован без пароля")
     @Description("Авторизации курьера без пароля")
     public void checkVerificationWithoutPasswordAuthorization() {
-        CourierSteps courierClient = new CourierSteps();
-        Response postRequestCourierLogin = courierClient.getPostRequestCourierLogin(new Courier("Pechkin123", ""));
+        CourierSteps courierStep = new CourierSteps();
+        Response postRequestCourierLogin = courierStep.getPostRequestCourierLogin(new Courier("Pechkin123", ""));
         postRequestCourierLogin.then().log().all().assertThat().statusCode(400).and().body("message", Matchers.is("Недостаточно данных для входа"));
     }
 
@@ -45,8 +45,8 @@ public class CreatingLoginTest {
     @DisplayName("Курьер авторизирован под некорректным логином")
     @Description("Авторизации курьера в системе под несуществующим пользователем")
     public void checkAuthorizationUnderIncorrectLogin() {
-        CourierSteps courierClient = new CourierSteps();
-        Response postRequestCourierLogin = courierClient.getPostRequestCourierLogin(new Courier("Iv", "Pas1233"));
+        CourierSteps courierStep = new CourierSteps();
+        Response postRequestCourierLogin = courierStep.getPostRequestCourierLogin(new Courier("Iv", "Pas1233"));
         postRequestCourierLogin.then().log().all().assertThat().statusCode(404).and().body("message", Matchers.is("Учетная запись не найдена"));
     }
 
@@ -54,8 +54,8 @@ public class CreatingLoginTest {
     @DisplayName("Курьер авторизирован под некорректным паролем")
     @Description("Авторизации курьера с неверным паролем")
     public void checkEnteringInvalidPassword() {
-        CourierSteps courierClient = new CourierSteps();
-        Response postRequestCourierLogin = courierClient.getPostRequestCourierLogin(new Courier("Pechkin123", "Pas321"));
+        CourierSteps courierStep = new CourierSteps();
+        Response postRequestCourierLogin = courierStep.getPostRequestCourierLogin(new Courier("Pechkin123", "Pas321"));
         postRequestCourierLogin.then().log().all().assertThat().statusCode(404).and().body("message", Matchers.is("Учетная запись не найдена"));
     }
 }

@@ -38,7 +38,9 @@ public class CreatingOrderTest {
     @DisplayName("Создание заказа")
     @Description("Создание заказов с различными наборами данных")
     public void checkCreateOrder() {
-        Response response = given().log().all().header("Content-type", "application/json").body(order).when().post("/api/v1/orders");
-        response.then().log().all().assertThat().and().statusCode(201).body("track", Matchers.notNullValue());
+        Response response = given().log().all().header("Content-type", "application/json")
+                .body(order).when().post("/api/v1/orders");
+        response.then().log().all().assertThat().and().statusCode(201)
+                .body("track", Matchers.notNullValue());
     }
 }

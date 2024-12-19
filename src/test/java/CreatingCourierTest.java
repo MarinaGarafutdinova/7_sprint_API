@@ -9,43 +9,48 @@ import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
 
+import static Objects.CourierGenerator.getRandomCourier;
+
 
 public class CreatingCourierTest {
+
     @Before
     public void setUp() {
         RestAssured.baseURI = "https://qa-scooter.praktikum-services.ru";
     }
 
-    @Test
+    @Test    //в этом тесте я использовала генератор данных для курьера,
+    // а в остальных надо не все данные использовать, опэтому я не знаю, как там использовать генератор
     @DisplayName("Создание учетной записи курьера")
     @Description("Статус-код и значений для полей /api/v1/courier")
     public void createCourierTest() {
-        CourierSteps courierSteps = new CourierSteps();
-        String login = "Igor"+ RandomStringUtils.randomAlphabetic(3);
-        String password = "Pas"+ RandomStringUtils.randomAlphabetic(3);
-        String firstName = "IgorIv"+ RandomStringUtils.randomAlphabetic(3);
-        Response postRequestCreateCourier = courierSteps.getPostRequestCreateCourier(new Courier(login, password, firstName));
-        postRequestCreateCourier.then().log().all().assertThat().statusCode(201).and().body("ok", Matchers.is(true));
+        CourierSteps courierStep = new CourierSteps();
+        Courier courier = getRandomCourier();
+        Response postRequestCreateCourier = courierStep.getPostRequestCreateCourier(courier);
+        postRequestCreateCourier.then().log().all().assertThat().statusCode(201)
+                .and().body("ok", Matchers.is(true));
     }
 
     @Test
     @DisplayName("Создание курьера без имени курьера")
     @Description("Статус-код и сообщение при создании курьера без имени курьера")
     public void creatingCourierWithoutFirstName() {
-        CourierSteps courierClient = new CourierSteps();
+        CourierSteps courierStep = new CourierSteps();
         String login = "Igor"+ RandomStringUtils.randomAlphabetic(3);
         String password = "Pas"+ RandomStringUtils.randomAlphabetic(3);
-        Response postRequestCreateCourier = courierClient.getPostRequestCreateCourier(new Courier(login, password));
-        postRequestCreateCourier.then().log().all().assertThat().statusCode(201).and().body("ok", Matchers.is(true));
+        Response postRequestCreateCourier = courierStep.getPostRequestCreateCourier(new Courier(login, password, null));
+        postRequestCreateCourier.then().log().all().assertThat().statusCode(201)
+                .and().body("ok", Matchers.is(true));
     }
 
     @Test
     @DisplayName("Создание курьеров с одинаковыми логинами")
     @Description("Статус-код и сообщение при создании двух курьеров с одинаковыми логинами")
     public void creatingTwoIdenticalLoginCouriers() {
-        CourierSteps courierClient = new CourierSteps();
-        Response postRequestCreateCourier = courierClient.getPostRequestCreateCourier(new Courier("Pechkin123", "Pas1233", "IIPechkin"));
-        postRequestCreateCourier.then().log().all().assertThat().statusCode(409).and().body("message", Matchers.is("Этот логин уже используется. Попробуйте другой."));
+        CourierSteps courierStep = new CourierSteps();
+        Response postRequestCreateCourier = courierStep.getPostRequestCreateCourier(new Courier("Pechkin123", "Pas1233", "IIPechkin"));
+        postRequestCreateCourier.then().log().all().assertThat().statusCode(409)
+                .and().body("message", Matchers.is("Этот логин уже используется. Попробуйте другой."));
     }
 
 
@@ -53,36 +58,35 @@ public class CreatingCourierTest {
     @DisplayName("Создание курьера без логина")
     @Description("Статус-код  и сообщение при создании курьера без логина")
     public void creatingCourierWithoutLogin() {
-        CourierSteps courierClient = new CourierSteps();
-        String login = "";
+        CourierSteps courierStep = new CourierSteps();
         String password = "Pas"+ RandomStringUtils.randomAlphabetic(3);
         String firstName = "IgorIv"+ RandomStringUtils.randomAlphabetic(3);
-        Response postRequestCreateCourier = courierClient.getPostRequestCreateCourier(new Courier(login, password, firstName));
-        postRequestCreateCourier.then().log().all().assertThat().statusCode(400).and().body("message", Matchers.is("Недостаточно данных для создания учетной записи"));
+        Response postRequestCreateCourier = courierStep.getPostRequestCreateCourier(new Courier(null, password, firstName));
+        postRequestCreateCourier.then().log().all().assertThat().statusCode(400)
+                .and().body("message", Matchers.is("Недостаточно данных для создания учетной записи"));
     }
 
     @Test
     @DisplayName("Создание курьера без пароля")
     @Description("Статус-код и сообщение при создании курьера без пароля")
     public void creatingCourierWithoutPassword() {
-        CourierSteps courierClient = new CourierSteps();
+        CourierSteps courierStep = new CourierSteps();
         String login = "Igor"+ RandomStringUtils.randomAlphabetic(3);
-        String password = "";
         String firstName = "IgorIv"+ RandomStringUtils.randomAlphabetic(3);
-        Response postRequestCreateCourier = courierClient.getPostRequestCreateCourier(new Courier(login, password, firstName));
-        postRequestCreateCourier.then().log().all().assertThat().statusCode(400).and().body("message", Matchers.is("Недостаточно данных для создания учетной записи"));
+        Response postRequestCreateCourier = courierStep.getPostRequestCreateCourier(new Courier(login, null, firstName));
+        postRequestCreateCourier.then().log().all().assertThat().statusCode(400)
+                .and().body("message", Matchers.is("Недостаточно данных для создания учетной записи"));
     }
 
     @Test
     @DisplayName("Создание курьера без логина и пароля")
     @Description("Статус-код и сообщение при создании курьера без логина и пароля")
     public void creatingCourierWithoutLoginAndPassword() {
-        CourierSteps courierClient = new CourierSteps();
-        String login = "";
-        String password = "";
+        CourierSteps courierStep = new CourierSteps();
         String firstName = "IgorIv"+ RandomStringUtils.randomAlphabetic(3);
-        Response postRequestCreateCourier = courierClient.getPostRequestCreateCourier(new Courier(login, password, firstName));
-        postRequestCreateCourier.then().log().all().assertThat().statusCode(400).and().body("message", Matchers.is("Недостаточно данных для создания учетной записи"));
+        Response postRequestCreateCourier = courierStep.getPostRequestCreateCourier(new Courier(null, null, firstName));
+        postRequestCreateCourier.then().log().all().assertThat().statusCode(400)
+                .and().body("message", Matchers.is("Недостаточно данных для создания учетной записи"));
     }
 }
 
